@@ -1,0 +1,20 @@
+<project default="copy-resources">
+  <target name="init"/>
+  <target name="copy-resources" depends="init">
+    <copy todir="target/classes/resources" filtering="false">
+      <fileset dir="src/resources" includes="" excludes="Resources.java|**/*.java"/>
+    </copy>
+    <copy todir="target/classes/Users/heriberto/Edinburgh/workspace/STACSettlers/branches/hwu-learning-2/java/target" filtering="false">
+      <fileset dir="." includes="config.txt|dbconfig.txt|configuration.xml|log4j2.yaml" excludes="**/*.java"/>
+    </copy>
+    <copy todir="target/classes/soc/client/images" filtering="false">
+      <fileset dir="src/soc/client/images" includes="" excludes="**/*.java"/>
+    </copy>
+    <copy todir="target/classes/soc/client/images/rotat" filtering="false">
+      <fileset dir="src/soc/client/images/rotat" includes="" excludes="**/*.java"/>
+    </copy>
+    <copy todir="target/classes/soc/client/sounds" filtering="false">
+      <fileset dir="src/soc/client/sounds" includes="" excludes="**/*.java"/>
+    </copy>
+  </target>
+</project>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE game_fragment SYSTEM 'SettlersAtt.dtd'>
+
+<game_fragment>
+    <game_event event_id="turn_444">
+        <chat_message>
+            <edu edu_id="edu_123" speaker="Ian" addressee="Neil"  text="No, what I said earlier!" start="0" end="24" surface_act="assertion">
+                <dialogue_act>
+                    <offer_or_counteroffer>
+                        <givables>
+                            <res_exp>
+                                <bool_res>
+                                    <and_res>
+                                        <res_exp>
+                                            <resource min_number="one" max_number="one" res_type="wheat"></resource>
+                                        </res_exp>
+                                        <res_exp>
+                                            <resource min_number="unknown" max_number="unknown" res_type="ore"/>
+                                        </res_exp>
+                                    </and_res>
+                                </bool_res>
+                            </res_exp>
+                        </givables>
+                        <non_givables/>
+                        <receivables/>
+                        <non_receivables/>
+                    </offer_or_counteroffer>
+                </dialogue_act>
+                <discourse_structure>
+                    <discourse_relation attachment_type="edu_id" attachment_id="edu_333" sdrt_relation="correction"/>
+                </discourse_structure>
+            </edu>
+        </chat_message>
+    </game_event>
+</game_fragment>

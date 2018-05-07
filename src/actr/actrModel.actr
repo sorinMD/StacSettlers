@@ -1,0 +1,686 @@
+;;
+;; STAC
+;; partial JSettlers Declarative Memory
+;;
+
+;(set-task "actr.tasks.STAC.CMA")
+
+;; ==================
+;; SET ACT-R PARAMETERS
+;; ==================
+
+(sgp :v t :esc t :rt 0.0 :lf 0.4 :ans 0.5 :bll 0.5 :act t) ;; :ncnar nil)
+;(sgp :esc t :lf .05 :act t :bll 0.5)
+; :rt - retrieval threshold
+; :cst - conflict set trace
+
+;; ==================
+;; CHUNK TYPES FOR DOCUMENTATION PURPOSES; jACT-R DOESN'T USE THEM
+;; ==================
+
+;;info
+;(chunk-type is-selling player resource selling)
+;(chunk-type player-resource-observed player resource amount)
+
+;;goals
+;(chunk-type add-player-resource player resource amount evidence)
+;(chunk-type add-is-selling player resource selling)
+;(chunk-type remember-is-selling player resource)
+;(chunk-type reset-is-selling)
+
+;; ==================
+;; ADD INITIAL CHUNKS TO DM
+;; ==================
+
+(add-dm    ;(next-resource-0 isa next-resource this none next clay)
+    ;(next-resource-1 isa next-resource this clay next ore)
+    ;(next-resource-2 isa next-resource this ore next sheep)
+    ;(next-resource-3 isa next-resource this sheep next wheat)
+    ;(next-resource-4 isa next-resource this wheat next wood)    
+    ;(reset-is-selling-goal isa  reset-is-selling) ;;this is the only chunk that JSettlers assumes to exist --> NOT ANY MORE!    
+    ;(add-is-selling-goal isa  add-is-selling)
+    ;(remember-is-selling-goal isa  remember-is-selling)
+    ;(stop-run-goal isa  stop-model-run-goal)
+    ;(is-selling-1 isa  is-selling player Original_1 resource wheat selling false)
+    ;(is-selling-2 isa  is-selling player Original_2 resource wheat selling false)
+    ;(is-selling-3 isa  is-selling player Original_1 resource clay selling false)
+    ;(add-is-selling-goal-test isa  add-is-selling player Original_3 resource wheat selling false)
+    ;(remember-is-selling-goal-test isa  remember-is-selling player Original_1 resource wood)
+    ;(subtract-player-resource-goal-test isa subtract-player-resource-unknown player original_1 amount 1)
+    ;(player-resource~1 isa player-resource player original_1 resource wheat amount 2 evidence observed)
+    ;(player-resource~2 isa player-resource player original_1 resource wood amount 1 evidence observed)
+    ;(player-resource~3 isa player-resource player original_1 resource ore amount 0 evidence believed)
+    ;    (add-player-resource-goal isa  add-player-resource player original_1 resource wood amount 2)
+    ;(remember-player-resource-goal-test isa  remember-player-resource player original_1 resource wheat)
+    ;(past-trade-offer-example isa past-trade-offer give-clay 2 give-ore 0 give-sheep 0 give-wheat 0 give-wood 0 get-clay 0 get-ore 0 get-sheep 0 get-wheat 0 get-wood 0 from original_1 to-player-1 true to-player-2 false to-player-3 false to-player-4 false)
+    ;(retrieve-past-trade-offer-goal isa retrieve-past-trade-offer give-clay 2 give-ore 0 give-sheep 0 give-wheat 0 give-wood 0 get-clay 0 get-ore 0 get-sheep 0 get-wheat 0 get-wood 0)
+    (best-compl-TO-example isa best-completed-trade-offer give-clay 2 give-ore 0 give-sheep 0 give-wheat 0 give-wood 0 get-clay 0 get-ore 0 get-sheep 0 get-wheat 0 get-wood 0 from original_1 to-player-1 true to-player-2 false to-player-3 false to-player-4 false)
+    (add-best-compl-TO-goal isa add-best-completed-trade-offer give-clay 0 give-ore 0 give-sheep 1 give-wheat 0 give-wood 0 get-clay 0 get-ore 0 get-sheep 0 get-wheat 2 get-wood 0 from original_1 to-player-1 true to-player-2 false to-player-3 false to-player-4 false)
+    (retrieve-best-completed-trade-offer-goal isa retrieve-best-completed-trade-offer)
+)
+
+;; ==================
+;; GOAL FOCUS FOR TESTING
+;; ==================
+
+(goal-focus retrieve-best-completed-trade-offer-goal)
+;(goal-focus add-best-compl-TO-goal)
+;(goal-focus subtract-player-resource-goal-test)
+;(goal-focus add-player-resource-goal)
+;(goal-focus remember-player-resource-goal-test)
+;(goal-focus remember-is-selling-goal-test)
+;(goal-focus reset-is-selling-goal)
+;(goal-focus add-is-selling-goal-test)
+
+;; ==================
+;; GENERAL PURPOSE
+;; ==================
+
+(p move-imaginal-chunk-to-DM
+    =goal>
+        isa           move-imaginal-chunk-to-DM
+    =imaginal>
+        ;        isa           is-selling
+==>
+    -imaginal>
+    -goal>
+        ;    +goal>
+        ;        isa           stop-model-run-goal
+)
+
+(p stop-model-run
+    =goal>
+        isa           stop-model-run-goal
+==>
+        ;    -imaginal>
+        ;    -retrieval>
+    -goal>
+        ;-goal>
+        ;;  state empty
+)
+
+;; ==================
+;; ADDING PLAYER-RESOURCE
+;; ==================
+
+(p add-player-resource
+    =goal>
+        isa           add-player-resource
+        player      =plyr
+        resource   =rcsc
+==>
+    =goal>
+        isa           modify-player-resource
+        type        add
+    +retrieval>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+)
+
+(p add-player-resource-chunk-exists
+    =goal>
+        isa            modify-player-resource
+        type         add
+        amount    =amt
+    =retrieval>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+        amount    =existing-amt
+==>
+    !bind! =new-amt (+ =existing-amt =amt)        
+    =retrieval>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+        amount    =new-amt
+    -goal>
+        ;    +goal>
+        ;isa           stop-model-run-goal ;move-imaginal-chunk-to-DM
+)
+
+(p add-player-resource-create-chunk
+    =goal>
+        isa            modify-player-resource
+        type         add
+        player      =plyr
+        resource   =rcsc
+        amount    =amt
+    ?retrieval>
+        state        error
+==>
+    +imaginal>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+        amount    =amt
+        evidence   observed
+    +goal>
+        isa           move-imaginal-chunk-to-DM
+)
+
+;; ==================
+;; SUBTRACTING PLAYER-RESOURCE
+;; ==================
+
+(p subtract-player-resource
+    =goal>
+        isa           subtract-player-resource
+        player      =plyr
+        resource   =rcsc
+        amount    =amt-to-subtract
+==>
+    +goal>
+        isa           modify-player-resource
+        type        subtract
+        amount    =amt-to-subtract
+    +retrieval>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+)
+
+(p subtract-player-resource-chunk-exists
+    =goal>
+        isa            modify-player-resource
+        type         subtract
+        amount    =amt-to-subtract
+    =retrieval>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+        amount    =amt
+==>
+    !bind! =new-amt (- =amt =amt-to-subtract)
+    !bind! =new-amt (if (< =new-amt 0))
+        ;!output! ("new amount: " =new-amt)
+    =retrieval>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+        amount    =new-amt
+    -goal>
+        ;    +goal>
+        ;isa           stop-model-run-goal ;move-imaginal-chunk-to-DM
+)
+
+;If we're trying to subtract a resource amount from a resource not stored in DM, just assume it's 0.
+(p subtract-player-resource-create-chunk
+    =goal>
+        isa            modify-player-resource
+        type         subtract
+        player      =plyr
+        resource   =rcsc
+    ?retrieval>
+        state        error
+==>
+    +imaginal>
+        isa           player-resource
+        player      =plyr
+        resource   =rcsc
+        amount    0
+        evidence   believed
+    +goal>
+        isa           move-imaginal-chunk-to-DM
+)
+
+    ;(p subtract-player-resource-unknown-1
+    ;=goal>
+    ;isa           subtract-player-resource-unknown
+    ;player      =plyr
+    ;amount    =amt-to-subtract
+    ;==>
+    ;!output! =plyr
+    ;!bind! =rcsc (clay) ;(if (= =plyr original_1) clay)
+    ;+goal>
+    ;isa           subtract-player-resource-unknown-2
+    ;player      =plyr
+    ;amount    =amt-to-subtract
+    ;+retrieval>
+    ;isa           player-resource
+    ;player      =plyr
+    ;resource  =rcsc
+    ;)
+
+    ;(p subtract-player-resource-unknown-2
+    ;=goal>
+    ;isa           subtract-player-resource-unknown-2
+    ;player      =plyr
+    ;amount    =amt-to-subtract
+    ;=retrieval>
+    ;isa           player-resource
+    ;player      =plyr
+    ;resource  =rcsc
+    ;amount   =amt
+    ;==>
+    ;!bind! =rcsc (next-resource =rcsc)
+    ;!bind! =new-amt (- =amt =amt-to-subtract)
+    ;!bind! =new-amt (if (< =new-amt 0))
+    ;+goal>
+    ;isa           subtract-player-resource-unknown
+    ;=retrieval>
+    ;isa           player-resource
+    ;;        player      =plyr
+    ;;resource  =rcsc
+    ;amount   =new-amt
+    ;+retrieval>
+    ;isa           player-resource
+    ;player      =plyr
+    ;resource  =rcsc
+    ;)
+
+
+;; ==================
+;; REMEMBERING PLAYER-RESOURCE
+;; ==================
+
+(p remember-player-resource
+    =goal>
+        isa           remember-player-resource
+        player      =plyr
+        resource  =rsrc
+==>
+    +retrieval>
+        isa          player-resource
+        player     =plyr
+        resource =rsrc
+    +goal>
+        isa         harvest-retrieval-player-resource
+    +imaginal>
+        isa           player-info
+        player      =plyr
+        resource  =rsrc
+)
+
+;; Keep the retrieved chunk in the retrieval buffer but recreate it in the imaginal buffer 
+(p retrieved-player-resource
+    =goal>
+        isa         harvest-retrieval-player-resource
+    =imaginal>
+        isa           player-info
+        player      =plyr
+        resource  =rsrc
+    =retrieval>
+        isa          player-resource
+        player     =plyr
+        resource =rsrc
+        amount  =amt
+        evidence =ev
+==>
+    +imaginal>
+        isa          player-resource
+        player     =plyr
+        resource =rsrc
+        amount  =amt
+        evidence =ev
+    =retrieval>
+        ;    -goal>
+    +goal>
+        isa         stop-model-run-goal  ;move-imaginal-chunk-to-DM ;
+)
+
+(p no-memory-of-player-resource
+    =goal>
+        isa         harvest-retrieval-player-resource
+    =imaginal>
+        isa           player-info
+        player      =plyr
+        resource  =rsrc
+    ?retrieval>
+        state      error
+==>
+    +imaginal>
+        isa          player-resource
+        player     =plyr
+        resource =rsrc
+        amount  0
+        evidence believed
+    +goal>
+        isa           move-imaginal-chunk-to-DM
+)
+
+;; ==================
+;; ADDING IS-SELLING
+;; ==================
+
+(p add-is-selling
+    =goal>
+        isa           add-is-selling
+        player      =plyr
+        resource   =rcsc
+        selling      =sell
+==>
+    +imaginal>
+        isa           is-selling
+        player      =plyr
+        resource   =rcsc
+        selling      =sell
+    +goal>
+        isa           move-imaginal-chunk-to-DM
+)
+
+;; ==================
+;; REMEMBERING IS-SELLING
+;; ==================
+
+(p remember-is-selling
+    =goal>
+        isa           remember-is-selling
+        player      =plyr
+        resource  =rsrc
+==>
+    +retrieval>
+        isa          is-selling
+        player     =plyr
+        resource =rsrc
+    +goal>
+        isa         harvest-retrieval-is-selling
+    +imaginal>
+        isa           player-info
+        player      =plyr
+        resource  =rsrc
+)
+
+(p retrieved-is-selling
+    =goal>
+        isa         harvest-retrieval-is-selling
+    =imaginal>
+        isa           player-info
+        player      =plyr
+        resource  =rsrc
+    =retrieval>
+        isa          is-selling
+        player     =plyr
+        resource =rsrc
+        selling     =sell
+==>
+    +imaginal>
+        isa          is-selling
+        player     =plyr
+        resource =rsrc
+        selling     =sell
+    =retrieval>
+    -goal>
+        ;    +goal>
+        ;isa           stop-model-run-goal
+)
+
+(p no-memory-of-is-selling
+    =goal>
+        isa         harvest-retrieval-is-selling
+    =imaginal>
+        isa           player-info
+        player      =plyr
+        resource  =rsrc
+    ?retrieval>
+        state      error
+==>
+    +imaginal>
+        isa          is-selling
+        player     =plyr
+        resource =rsrc
+        selling     true
+    +goal>
+        isa           move-imaginal-chunk-to-DM
+)
+
+;; ==================
+;; RESETTING IS-SELLING
+;; ==================
+
+(p reset-is-selling
+    =goal>
+        isa         reset-is-selling
+==>
+    +retrieval>
+        isa         is-selling
+        selling    false
+    +goal>
+        isa         set-is-selling-to-true      
+)
+
+(p set-is-selling-to-true
+    =goal>
+        isa         set-is-selling-to-true
+    =retrieval>
+        isa         is-selling
+        selling    false
+==>
+    +goal>
+        isa         reset-is-selling
+    =retrieval>
+        selling    true
+)
+
+(p set-is-selling-to-true-retrieval-fail
+    =goal>
+        isa         set-is-selling-to-true
+    ?retrieval>
+        state      error
+==>
+    -goal>
+        ;    +goal>
+        ;isa           stop-model-run-goal
+)
+
+;; ==================
+;; ADD PAST-TRADE-OFFER
+;; ==================
+
+(p add-past-trade-offer
+    =goal>
+        isa              add-past-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+        from           =fromName
+        to-player-1  =offered-to-1
+        to-player-2  =offered-to-2
+        to-player-3  =offered-to-3
+        to-player-4  =offered-to-4
+==>
+    +imaginal>
+        isa              past-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+        from           =fromName
+        to-player-1  =offered-to-1
+        to-player-2  =offered-to-2
+        to-player-3  =offered-to-3
+        to-player-4  =offered-to-4
+    +goal>
+        isa           move-imaginal-chunk-to-DM
+)
+
+;; ==================
+;; RETRIEVE PAST-TRADE-OFFER
+;; ==================
+
+(p retrieve-past-trade-offer
+    =goal>
+        isa              retrieve-past-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+==>
+    +retrieval>
+        isa              past-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+    -goal>
+        ;        isa           move-imaginal-chunk-to-DM
+)
+
+;; ==================
+;; "FORGETTING" ALL PAST-TRADE-OFFERS
+;; ==================
+
+(p forget-past-trade-offers
+    =goal>
+        isa              forget-past-trade-offers
+==>
+    +retrieval>
+        isa              past-trade-offer
+    +goal>
+        isa              forget-this-past-trade-offer
+)
+
+(p forget-this-past-trade-offers
+    =goal>
+        isa              forget-this-past-trade-offer
+    =retrieval>
+        isa              past-trade-offer
+==>
+    =retrieval>
+        isa              past-trade-offer-forgotten
+    -goal>
+        ;    +goal>
+        ;        isa           stop-model-run-goal
+)
+
+;; ==================
+;; ADD BEST-COMPLETED-TRADE-OFFER
+;; ==================
+
+(p add-best-completed-trade-offer
+    =goal>
+        isa              add-best-completed-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+        from           =fromName
+        to-player-1  =offered-to-1
+        to-player-2  =offered-to-2
+        to-player-3  =offered-to-3
+        to-player-4  =offered-to-4
+==>
+    +retrieval>
+        isa              best-completed-trade-offer
+    +imaginal>
+        isa              best-completed-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+        from           =fromName
+        to-player-1  =offered-to-1
+        to-player-2  =offered-to-2
+        to-player-3  =offered-to-3
+        to-player-4  =offered-to-4
+    +goal>
+        isa           add-best-completed-trade-offer-2
+)
+
+(p add-best-completed-trade-offer-chunk-exists
+    =goal>
+        isa              add-best-completed-trade-offer-2
+    =retrieval>
+        isa              best-completed-trade-offer
+    =imaginal>
+        isa              best-completed-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+        from           =fromName
+        to-player-1  =offered-to-1
+        to-player-2  =offered-to-2
+        to-player-3  =offered-to-3
+        to-player-4  =offered-to-4
+==>
+    =retrieval>
+        isa              best-completed-trade-offer
+        give-clay     =give-clay-amt
+        give-ore      =give-ore-amt
+        give-sheep  =give-sheep-amt
+        give-wheat  =give-wheat-amt
+        give-wood   =give-wood-amt
+        get-clay      =get-clay-amt
+        get-ore       =get-ore-amt
+        get-sheep   =get-sheep-amt
+        get-wheat   =get-wheat-amt
+        get-wood    =get-wood-amt
+        from           =fromName
+        to-player-1  =offered-to-1
+        to-player-2  =offered-to-2
+        to-player-3  =offered-to-3
+        to-player-4  =offered-to-4
+    -goal>
+)
+
+(p add-best-completed-trade-offer-create-chunk
+    =goal>
+        isa              add-best-completed-trade-offer-2
+    ?retrieval>
+        state      error   
+    =imaginal>
+        isa              best-completed-trade-offer
+==>
+    =imaginal>
+    +goal>
+        isa           move-imaginal-chunk-to-DM
+)
+
+;; ==================
+;; RETRIEVE BEST-COMPLETED-TRADE-OFFER
+;; ==================
+
+(p retrieve-best-completed-trade-offer
+    =goal>
+        isa              retrieve-best-completed-trade-offer
+==>
+    +retrieval>
+        isa              best-completed-trade-offer
+    -goal>
+        ;        isa           move-imaginal-chunk-to-DM
+)

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The root element is list of game_events. 
+    JSettlers and the parsing pipeline exchange these events.
+    They are basically a subset of JSettlers game events that is similar to the Toulouse turns.
+    JSettlers will be sending the information contained in the corresponding JSettlers messages (akin to soclog lines).
+    Exact format to be agreed on with Eric.
+-->
+<!ELEMENT game_fragment (game_event*) >
+<!ELEMENT game_event (event_id,(start_turn|dice_roll|resource_gain|trade_exchange|build_action|chat_message)) >
+
+<!-- ID with which JSettlers and the parsing pipeline synchronise. 
+    Note that #PCDATA can be the empty string. While this is useful for an unknown addressee, for example, for IDs, this is not good.
+    (This may be a reason to prefer the `attribute solution', where ID attributes can be #REQUIRED.)
+-->
+<!ELEMENT event_id (#PCDATA) >
+
+<!-- The parser only uses information about some particular game events (soclog messages) -->
+<!ELEMENT start_turn (player) >
+
+<!-- This corresponds to the matching of 'rolled' for the parser. -->
+<!ELEMENT dice_roll (dice_result) >
+<!ELEMENT dice_result (#PCDATA) >
+
+<!-- This corresponds to the matching of 'gets' for the parser.
+    These are the resources that a particular player gets from a dice roll. 
+    The intention here is that it is a simple list of resources, even though the definition of and_res includes 
+    a recursive definition of a boolean expression. -->
+<!ELEMENT resource_gain (player|and_res) >
+<!ELEMENT player (#PCDATA) >
+
+<!-- This corresponds to the matching of 'traded' for the parser. -->
+<!ELEMENT trade_exchange (player1|player1_give_res|player2|player2_give_res) >
+<!ELEMENT player1 (#PCDATA) >
+<!ELEMENT player1_give_res (and_res) >
+<!ELEMENT player2 (#PCDATA) >
+<!ELEMENT player2_give_res (and_res) >
+
+<!-- This corresponds to the matching of 'built' for the parser. -->
+<!ELEMENT build_action (player|piece) >
+<!ELEMENT piece (road|settlement|city|development_card) >
+<!ELEMENT road EMPTY >
+<!ELEMENT settlement EMPTY >
+<!ELEMENT city EMPTY >
+<!ELEMENT development_card EMPTY >
+
+<!-- ********************* -->
+<!-- *** Chat Messages *** -->
+<!-- ********************* -->
+<!-- A chat message must contain at least one EDU. -->
+<!ELEMENT chat_message (edu+) >
+
+<!-- Top level definition of an EDU -->
+<!ELEMENT edu (edu_id,speaker,addressee,text,start,end,surface_act,dialogue_act,discourse_structure) >
+
+<!-- General information about the EDU that cannot be categorised further. -->
+<!ELEMENT edu_id (#PCDATA) >
+<!ELEMENT speaker (#PCDATA) >
+<!ELEMENT addressee (#PCDATA) >
+<!ELEMENT text (#PCDATA) >
+<!ELEMENT start (#PCDATA) >
+<!ELEMENT end (#PCDATA) >
+
+<!-- Surface act -->
+<!ELEMENT surface_act (assertion|request|question) >
+<!ELEMENT assertion EMPTY >
+<!ELEMENT request EMPTY >
+<!ELEMENT question EMPTY >
+
+<!-- Dialogue act -->
+<!ELEMENT dialogue_act (accept|refusal|other|offer_or_counteroffer) >
+
+<!-- Types of dialogue acts used in the corpus. 
+    For JSettlers-internal communication, more special types of 'chat moves', e.g. persuasion,
+    could be modelled as optional subelements or attributes of "other".
+-->
+<!ELEMENT accept (givables,non_givables,receivables,non_receivables) >
+<!ELEMENT refusal (givables,non_givables,receivables,non_receivables) >
+<!ELEMENT other EMPTY >
+<!ELEMENT offer_or_counteroffer (givables,non_givables,receivables,non_receivables) >
+
+<!-- Givable & receivable resrouces. "?": 0 or 1 occurrece of the element -->
+<!ELEMENT givables (res_exp?) >
+<!ELEMENT non_givables (res_exp?) >
+<!ELEMENT receivables (res_exp?) >
+<!ELEMENT non_receivables (res_exp?) >
+
+<!-- A resource expression is either specifying a type & number or a recursive boolean combination of resource expressions. -->
+<!ELEMENT res_exp (resource|bool_res) >
+
+<!-- Simple resource -->
+<!ELEMENT resource (min_number,max_number,res_type) >
+<!ELEMENT res_type (clay|ore|sheep|wheat|wood) >
+<!ELEMENT min_number (zero|one|two|three|four|five|six|seven|eight|nine|infinite|unknown) >
+<!ELEMENT max_number (zero|one|two|three|four|five|six|seven|eight|nine|infinite|unknown) >
+
+<!-- Boolean combination of resource expressions (recursive) -->
+<!ELEMENT bool_res (and_res|or_res|not_res) >
+<!ELEMENT and_res (res_exp,res_exp) >
+<!ELEMENT or_res (res_exp,res_exp) >
+<!ELEMENT not_res (res_exp) >
+
+<!-- Resources -->
+<!ELEMENT clay EMPTY >
+<!ELEMENT ore EMPTY >
+<!ELEMENT sheep EMPTY >
+<!ELEMENT wheat EMPTY >
+<!ELEMENT wood EMPTY >
+
+<!-- Quantities -->
+<!ELEMENT zero EMPTY >
+<!ELEMENT one EMPTY >
+<!ELEMENT two EMPTY >
+<!ELEMENT three EMPTY >
+<!ELEMENT four EMPTY >
+<!ELEMENT five EMPTY >
+<!ELEMENT six EMPTY >
+<!ELEMENT seven EMPTY >
+<!ELEMENT eight EMPTY >
+<!ELEMENT nine EMPTY >
+<!ELEMENT unknown EMPTY >
+
+<!-- Discourse structure, consisting of an attachment point and the type of discourse relation.
+    "*": any number of occurrences 
+-->
+<!ELEMENT discourse_structure (ds_pair*) >
+<!ELEMENT ds_pair (attachment_point,discourse_relation) >
+
+<!-- EDUs can attach to other EDUs or to game events.
+    The convention should be that if an edu_id is available, it should be preferred over event_ids.
+-->
+<!ELEMENT attachment_point (edu_id|event_id) >
+<!ELEMENT discourse_relation (continuation|result|elaboration|conditional|contrast|qap|qelab|acknowledgement|narration|correction|explanation|alternation|parallel|commentary|clarification_q|background) >
+
+<!-- Names of SDRT discourse relations as specifies in the annotation manual -->
+<!ELEMENT continuation EMPTY >
+<!ELEMENT result EMPTY >
+<!ELEMENT elaboration EMPTY >
+<!ELEMENT conditional EMPTY >
+<!ELEMENT contrast EMPTY >
+<!ELEMENT qap EMPTY >
+<!ELEMENT qelab EMPTY >
+<!ELEMENT acknowledgement EMPTY >
+<!ELEMENT narration EMPTY >
+<!ELEMENT correction EMPTY >
+<!ELEMENT explanation EMPTY >
+<!ELEMENT alternation EMPTY >
+<!ELEMENT parallel EMPTY >
+<!ELEMENT commentary EMPTY >
+<!ELEMENT clarification_q EMPTY >
+<!ELEMENT background EMPTY >

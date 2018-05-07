@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement>
+    <!--$rec is receivable & $giv is offered & $pl is player-->
+    <trade>
+        <!-- Patterns for trade offers -->
+        <initialTrade>
+            <tradeMessage specifyPlayer="false" specifyGiveable="false" specifyReceivable="true" context="">
+                <message>Does anyone have $rec?</message>
+                <message>Does anyone have $rec they are willing to trade?</message>
+                <!--<message>Anyone have $rec they are willing to trade?</message>-->
+                <message>Anyone got $rec they are willing to trade?</message>
+                <message>Does anyone have spare $rec?</message>
+                <message>Does anyone have any $rec?</message>
+                <message>Can someone give me $rec?</message>
+            </tradeMessage>
+            <tradeMessage specifyPlayer="false" specifyGiveable="true" specifyReceivable="false" context="">
+                <message>I am looking to trade $giv for something.</message>
+                <!--<message>Anyone want $giv?</message>-->
+                <message>Does anyone want $giv?</message>
+                <message>Does anybody need $giv?</message>
+                <message>I have spare $giv.</message>
+                <message>I'm offering $giv.</message>
+                <message>I can give away $giv.</message>
+                <message>I'm offering $giv.</message>
+            </tradeMessage>
+            <tradeMessage specifyPlayer="false" specifyGiveable="true" specifyReceivable="true" context="">
+                <!--<message>I'll trade $giv for $rec.</message>-->
+                <message>I've got $giv for $rec.</message>
+                <message>I can give $giv for $rec.</message>
+                <message>Does anybody have $rec in exchange for $giv?</message>
+                <message>Does anybody have $rec? I'll give $giv.</message>
+                <message>Would somebody give me $rec for $giv?</message>
+                <message>Does anybody have $rec for $giv?</message>
+            </tradeMessage>
+            <tradeMessage specifyPlayer="true" specifyGiveable="false" specifyReceivable="true" context="">
+                <message>$pl, do you have spare $rec?</message>
+                <message>$pl, can you give me $rec?</message>
+                <message>$pl, I would like $rec.</message>
+            </tradeMessage>
+            <tradeMessage specifyPlayer="true" specifyGiveable="true" specifyReceivable="false" context="">
+                <message>$pl, do you want $giv?</message>
+                <message>$pl, do you need $giv?</message>
+                <message>$pl, would you like $giv?</message>
+                <message>$pl, I have $giv ...</message>
+                <message>$pl, I can give you $giv.</message>
+            </tradeMessage>
+            <tradeMessage specifyPlayer="true" specifyGiveable="true" specifyReceivable="true" context="">
+                <message>$pl, do you want to get $giv for $rec?</message>
+                <message>$pl, I'd give you $giv for $rec.</message>
+            </tradeMessage>
+            <tradeMessage specifyPlayer="true" specifyGiveable="false" specifyReceivable="true" context="completingOfferImplicitGivables">
+                <message>OK, but I want to get $rec in return.</message>
+                <message>Would you give me $rec in return, $pl?</message>
+                <message>If you give me $rec, $pl ...</message>
+            </tradeMessage>
+            <tradeMessage specifyPlayer="true" specifyGiveable="true" specifyReceivable="false" context="completingOfferImplicitReceivables">
+                <message>OK, I can give you $giv in return.</message>
+                <message>I have $giv, $pl.</message>
+                <!--<message>If you accept $giv, $pl ...</message>-->
+                <!--<message>How about $giv, $pl?</message>-->
+            </tradeMessage>
+        </initialTrade>
+        <responseTrade>
+            <response accept="true" explicitAdressee="false">
+                <message>Okay.</message>
+                <message>Yes.</message>
+                <message>Yeah.</message>
+                <message>Sure.</message>
+                <message>Go on then.</message>
+                <message>Yeah, sure.</message>
+                <message>Alright.</message>
+            </response>
+            <response accept="true" explicitAdressee="true">
+                <message>Okay, $pl.</message>
+                <message>Yes, $pl.</message>
+                <message>Yeah, $pl.</message>
+                <message>Sure, $pl.</message>
+                <message>Go on then, $pl.</message>
+                <message>Yeah, $pl. Sure.</message>
+                <message>Alright, $pl.</message>
+            </response>
+            <response accept="true" negotiation="true">
+                <message>I accept $pl's negotiation.</message>
+            </response>
+            <response accept="false" explicitAddressee="false">
+                <message>No.</message>
+                <!--<message>No $rec, sorry.</message>
+                <message>I have no $rec.</message>-->
+                <message>Nope.</message>
+                <message>Sorry.</message>
+                <message>No.</message>
+                <message>No, thanks.</message>
+                <message>No, sorry.</message>
+                <message>Maybe later.</message>
+                <message>Not right now.</message>
+            </response>
+            <response accept="false" explicitAdressee="true">
+                <!--<message>I reject $pl's offer.</message>-->
+                <message>Sorry, $pl.</message>
+                <message>No, $pl. Thanks.</message>
+                <message>No, sorry, $pl.</message>
+                <message>No, $pl.</message>
+                <message>Maybe later, $pl.</message>
+                <message>Not right now, $pl</message>
+            </response>
+            <response accept="false" negotiation="true">
+                <message>I reject $pl's negotiation.</message>
+            </response>
+            <response accept="either" negotiation="either">
+                <message>I acknowledge $pl's trade offer.</message>
+            </response>
+        </responseTrade>
+    </trade>
+
+    <!--$rec is receivable & $giv is offered & $pl is player-->
+    <!--These clarification questions shouldn't be YesNo questions but always elicit the missing information! -->
+    <negotiation>
+        <fakeOpponentResponse>
+            <incompleteOffer emptySet="give">
+                <message>$se: What do you want for it, $re?</message>
+                <message>$se: Tell me what you want for it, $re!</message>
+                <message>$se: What do you want in return, $re?</message>
+                <message>$se: You can't just give me resources without getting anything in return, $re!</message>
+            </incompleteOffer>
+            <incompleteOffer emptySet="get">
+                <message>$se: You'll have to give me something in return, $re!</message>
+                <message>$se: What can you give me in return, $re?</message>
+                <message>$se: What are you offering, $re?</message>
+            </incompleteOffer>
+            <incompleteOffer disjunctiveSet="give">
+                <message>$se: Which one do you want, $re? </message>
+                <message>$se: You have to choose one, $re!</message>
+                <message>$se: I won't give you both, $re!</message>
+            </incompleteOffer>
+            <incompleteOffer disjunctiveSet="get">
+                <message>$se: Which one are you giving, $re? </message>
+                <message>$se: What are you offering, $re?</message>
+            </incompleteOffer>
+            <incompleteOffer unknownResources="give">
+                <!--<message>$se: What resource are you offering, $re?</message>-->
+                <message>$se: I don't know what you are offering.</message>
+            </incompleteOffer>
+            <incompleteOffer unknownResources="get">
+                <!--<message>$se: What resource do you want, $re?</message>-->
+                <message>$se: I don't know what resource you want, $re.</message>
+            </incompleteOffer>
+            <incompleteOffer unknownResources="both">
+                <message>$se: I don't know what types of resources you're talking about, $re!</message>
+                <message>$se: I don't know what resources you mean.</message>
+            </incompleteOffer>
+            <likeForLikeResources>
+                <message>$se: You can't exchange like for like resources, $re!</message>
+                <message>$se: You can't trade $rs for $rs, $re!</message>
+            </likeForLikeResources>
+            <moveRobber>
+                <message>$se: We can't trade until you move the robber first, $re!</message>
+                <message>$se: You have not yet moved the robber, $re!</message>
+                <message>$se: Move the robber first, $re!</message>
+            </moveRobber>
+            <generalFallback>
+                <message>$se: Sorry, I don't understand $re.</message>
+                <message>$se: Sorry, I don't understand what you said.</message>
+                <message>$se: I'm just a bot, please rephrase, $re.</message>
+                <message>$se: What do you mean?</message>
+                <message>$se: What are you saying?</message>
+                <message>$se: What are you saying $re?</message>
+                <message>$se: Sorry, I didn't get that, $re. Please say it again.</message>
+                <message>$se: Could you repeat that please?</message>
+                <message>$se: Huh?</message>
+                <message>$se: What?</message>
+                <message>$se: Say that again please, $re.</message>
+                <message>$se: I'm a bit stupid today; please say that again.</message>
+                <message>$se: I didn't get that, sorry.</message>
+                <message>$se: My cognitive functions are quite limited - please rephrase, $re.</message>
+            </generalFallback>
+        </fakeOpponentResponse>
+    </negotiation>
+
+    <!--$player is wildcard player and $res is the wildcard resource (possibly a set)-->
+    <!--The other 3 wildcards (if used) are taken directly from the trade begin made-->
+    <persuasion>
+
+        <IBP>
+            <road>
+                <constraints longestRoad="true" newSettlement="true">
+                    <message>You will be able to build a road, $LRType the Longest Road, and get a new location to build a settlement later if you accept this trade.</message>
+                </constraints>
+                <constraints longestRoad="true" newSettlement="false">
+                    <message>You will be able to build a road, and $LRType the Longest Road if you accept this trade.</message>
+                </constraints>
+                <constraints longestRoad="false" newSettlement="true">
+                    <message>If you accept this trade and build a road it will enable you to build a settlement later.</message>
+                </constraints>
+                <constraints longestRoad="false" newSettlement="false">
+                    <message>If you accept this trade you will be able to build a road.</message>
+                </constraints>
+            </road>
+            <settlement>
+                <constraints accessNewRes="true" VPs="true">
+                    <message>You will have access to $res if you accept the trade and build a settlement and $VPType the most VPs.</message>
+                </constraints>
+                <constraints accessNewRes="true" VPs="false">
+                    <message>You will be able to access $res if you build a settlement and accept this trade.</message>
+                </constraints>
+                <constraints accessNewRes="false" VPs="true">
+                    <message>You will $VPType the most VPs if you accept this trade and build a settlement.</message>
+                </constraints>
+                <constraints accessNewRes="false" VPs="false">
+                    <message>You will be able to build a settlement if you accept this trade.</message>
+                </constraints>
+            </settlement>
+            <city>
+                <constraints VPs="true">
+                    <message>You can build a city if you accept this trade and then you will $VPType the most Victory Points.</message>
+                </constraints>
+                <constraints VPs="false">
+                    <message>You can build a city if you accept this trade.</message>
+                </constraints>
+            </city>
+            <devCard>
+                <constraints largestArmy="true">
+                    <message>You could get a development card if you accept this trade, and if you get a knight you could $LAType the largest army.</message>
+                </constraints>
+                <constraints largestArmy="false">
+                    <message>You could get a development card if you accept this trade.</message>
+                </constraints>
+            </devCard>
+        </IBP>
+
+        <ITP>
+            <constraints>
+                <message>You will be able to trade $res over your $TType.</message>
+            </constraints>
+        </ITP>
+
+        <ResourceBased>
+            <tooManyRes>
+                <constraints>
+                    <message>You have too many resources right now, you'll lose half when a 7 is rolled.</message>
+                </constraints>
+            </tooManyRes>
+            <cantGetRes>
+                <constraints>
+                    <message>You can't get $res anywhere just now, so you can only get it if you trade with me.</message>
+                </constraints>
+            </cantGetRes>
+        </ResourceBased>
+
+        <AlwaysTrue>
+            <robPromise>
+                <constraints>
+                    <message>I promise not to rob you next time I get the chance.</message>
+                </constraints>
+            </robPromise>
+            <promiseResource>
+                <constraints>
+                    <message>I promise to give you $res when I get the chance.</message>
+                    <message>If you trade me I promise to give you $res when I get the chance.</message>
+                </constraints>
+            </promiseResource>
+        </AlwaysTrue>
+    </persuasion>
+</statement>

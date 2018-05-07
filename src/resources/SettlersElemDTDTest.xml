@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE game_fragment SYSTEM 'SettlersElem.dtd'>
+
+<game_fragment>
+    <game_event>
+        <event_id>turn_444</event_id>
+        <chat_message>
+            <edu>
+                <edu_id>edu_123</edu_id>
+                <speaker>Ian</speaker>
+                <addressee>Neil</addressee>
+                <text>
+                    No, what I said earlier!
+                </text>
+                <start>0</start>
+                <end>24</end>
+                <surface_act>
+                    <assertion/>
+                </surface_act>
+                <dialogue_act>
+                    <offer_or_counteroffer>
+                        <givables>
+                            <res_exp>
+                                <bool_res>
+                                    <and_res>
+                                        <res_exp>
+                                            <resource>
+                                                <min_number>
+                                                    <one/>
+                                                </min_number>
+                                                <max_number>
+                                                    <one/>
+                                                </max_number>
+                                                <res_type>
+                                                    <wheat/>
+                                                </res_type>
+                                            </resource>
+                                        </res_exp>
+                                        <res_exp>
+                                            <resource>
+                                                <min_number>
+                                                    <unknown/>
+                                                </min_number>
+                                                <max_number>
+                                                    <unknown/>
+                                                </max_number>
+                                                <res_type>
+                                                    <ore/>
+                                                </res_type>
+                                            </resource>
+                                        </res_exp>
+                                    </and_res>
+                                </bool_res>
+                            </res_exp>
+                        </givables>
+                        <non_givables/>
+                        <receivables/>
+                        <non_receivables/>
+                    </offer_or_counteroffer>
+                </dialogue_act>
+                <discourse_structure>
+                    <ds_pair>
+                        <attachment_point>
+                            <edu_id>
+                                edu_333
+                            </edu_id>
+                        </attachment_point>
+                        <discourse_relation>
+                            <correction/>
+                        </discourse_relation>
+                    </ds_pair>
+                </discourse_structure>
+            </edu>
+        </chat_message>
+    </game_event>
+</game_fragment>

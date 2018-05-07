@@ -1,0 +1,156 @@
+package representation;
+
+
+/**
+ * Offsets and sizes of vectors for numerical feature vectors.
+ * Note: these offsets can only be used with the small state vector type and with the action vector type.
+ * The other two types (common/large and old) have the offsets hard-coded and are kept only for reference to the initial implementations
+ * @author MD
+ */
+public interface NumericalFeatureVectorOffsets {
+	
+    //general description of the board
+	/** Reduced as with numbers on hexes. If it is 0, or less than it should be set	to 0; if it is 7 than it is set to 1 and 2-6 for the remaining values */
+	int OFS_BIAS_FEATURE = 0;
+	/** Is it his turn or not? For understanding end of turn action */
+	int OFS_CURRENTTURN = OFS_BIAS_FEATURE + 1;
+	int OFS_DICERESULT = OFS_CURRENTTURN + 1;
+    int OFS_TOTALSETTLEMENTS = OFS_DICERESULT + 1;
+    int OFS_TOTALROADS = OFS_TOTALSETTLEMENTS + 1;
+    int OFS_TOTALCITIES = OFS_TOTALROADS + 1;
+    int OFS_HASPLAYEDDEVCARD = OFS_TOTALCITIES + 1;
+    int OFS_BOARDPOSITION = OFS_HASPLAYEDDEVCARD + 1;
+    int OFS_ANYDEVCARDSLEFT = OFS_BOARDPOSITION + 1;
+    int OFS_RESOURCEBLOCKED = OFS_ANYDEVCARDSLEFT + 1;
+    int OFS_NUMBERBLOCKED = OFS_RESOURCEBLOCKED + 5; //5 types of rss
+    //description for current player
+    /**representing 1-10 and 11,12 being equal to 10 vps*/
+    int OFS_PLAYERSCORE = OFS_NUMBERBLOCKED + 1;
+    int OFS_LR = OFS_PLAYERSCORE + 1;
+    int OFS_LA = OFS_LR +1;
+    int OFS_ROADS = OFS_LA + 1;
+    int OFS_SETTLEMENTS = OFS_ROADS + 1;
+    /**max number of cities is 4*/
+    int OFS_CITIES = OFS_SETTLEMENTS + 1;
+    int OFS_CLAYINHAND = OFS_CITIES + 1; 
+    int OFS_OREINHAND = OFS_CLAYINHAND + 1;
+    int OFS_SHEEPINHAND = OFS_OREINHAND + 1;
+    int OFS_WHEATINHAND = OFS_SHEEPINHAND + 1;
+    int OFS_WOODINHAND = OFS_WHEATINHAND + 1; 
+    /**6 types of ports*/
+    int OFS_TOUCHING_PORTS = OFS_WOODINHAND + 1;
+    //number of settlements/cities adjacent to each rss, where sett = 1; city = 2 ;
+    int OFS_CLAYACCESS = OFS_TOUCHING_PORTS + 6; //6 types of ports
+    int OFS_OREACCESS = OFS_CLAYACCESS + 1;
+    int OFS_SHEEPACCESS = OFS_OREACCESS + 1;
+    int OFS_WHEATACCESS = OFS_SHEEPACCESS + 1;
+    int OFS_WOODACCESS = OFS_WHEATACCESS + 1;
+    //production as sum of numbers touching for each resource
+    int OFS_CLAYPRODUCTION = OFS_WOODACCESS + 1;
+    int OFS_OREPRODUCTION = OFS_CLAYPRODUCTION + 1;
+    int OFS_SHEEPPRODUCTION = OFS_OREPRODUCTION + 1;
+    int OFS_WHEATPRODUCTION = OFS_SHEEPPRODUCTION + 1;
+    int OFS_WOODPRODUCTION = OFS_WHEATPRODUCTION + 1;
+    //effect of robber on this player + how many pieces affected
+    int OFS_AFFECTEDBYROBBER = OFS_WOODPRODUCTION + 1;
+    /** a maximum of 6 production units can be affected by the robber, where a settlement gives 1 and a city gives 2 */
+    int OFS_NPIECESAFFECTED = OFS_AFFECTEDBYROBBER + 1;
+    int OFS_NPLAYERSAFFECTED = OFS_NPIECESAFFECTED + 1;
+    //development cards
+    /**limit knights to 5 maximum per player*/
+    int OFS_NPLAYEDKNIGHTS = OFS_NPLAYERSAFFECTED + 1;
+    /** maximum is 15 */
+    int OFS_CURRENTLONGESTROAD = OFS_NPLAYEDKNIGHTS +1;
+    /** Counter for the 3 special cards (there are 2 in total for each type in the deck) */
+    int OFS_PLAYEDDEVCARDSINHAND = OFS_CURRENTLONGESTROAD + 1;
+    /**only 4 dev cards can be played so we consider vp cards separately*/
+    int OFS_OLDDEVCARDSINHAND = OFS_PLAYEDDEVCARDSINHAND + 3;
+    int OFS_NEWDEVCARDSINHAND = OFS_OLDDEVCARDSINHAND + 4;
+    int OFS_VPCARDS = OFS_NEWDEVCARDSINHAND + 4;
+    //can do actions
+    int OFS_CANBUYCARD = OFS_VPCARDS + 1;
+    int OFS_CANBUILDROAD = OFS_CANBUYCARD + 1;
+    int OFS_CANBUILDSETTLEMENT = OFS_CANBUILDROAD + 1;
+    int OFS_CANBUILDCITY = OFS_CANBUILDSETTLEMENT + 1;
+    int OFS_CANBANKORPORTTRADE = OFS_CANBUILDCITY + 1;
+    int OFS_OVER7CARDS = OFS_CANBANKORPORTTRADE + 1;
+    /** This includes possible port types access */
+    int OFS_NEXTLEGALPRODUCTIVITY = OFS_OVER7CARDS + 1;
+    int OFS_EXPPOSSIBILITY = OFS_NEXTLEGALPRODUCTIVITY + 11;
+    //distances and blocked stuff
+//    int OFS_DISTANCETOPORT = OFS_NEXTLEGALPRODUCTIVITY + 11;
+//    int OFS_DISTANCETOLEGAL = OFS_DISTANCETOPORT + 1;
+//    int OFS_DISTANCETOOPP = OFS_DISTANCETOLEGAL + 1;
+    
+    //description for opponents
+    int OFS_OPP_SCORE = 0;
+    int OFS_OPP_LA = OFS_OPP_SCORE + 1;
+    int OFS_OPP_LR = OFS_OPP_LA + 1;
+    int OFS_OPP_CURRENTLONGESTROAD = OFS_OPP_LR + 1;
+    int OFS_OPP_NPLAYEDKNIGHTS = OFS_OPP_CURRENTLONGESTROAD + 1;
+    int OFS_OPP_HASDEVCARDS = OFS_OPP_NPLAYEDKNIGHTS + 1;
+    int OFS_OPP_AFFECTEDBYROBBER = OFS_OPP_HASDEVCARDS + 1;
+    int OFS_OPP_TOTALRSS = OFS_OPP_AFFECTEDBYROBBER + 1;
+    int OFS_OPP_ROADS = OFS_OPP_TOTALRSS + 1;
+    int OFS_OPP_SETTLEMENTS = OFS_OPP_ROADS + 1;
+    int OFS_OPP_CITIES = OFS_OPP_SETTLEMENTS + 1;
+    int OFS_OPP_TOUCHING_PORTS = OFS_OPP_CITIES + 1;
+    int OFS_OPP_CLAYACCESS = OFS_OPP_TOUCHING_PORTS + 6; //6 types of ports
+    int OFS_OPP_OREACCESS = OFS_OPP_CLAYACCESS + 1;
+    int OFS_OPP_SHEEPACCESS = OFS_OPP_OREACCESS + 1;
+    int OFS_OPP_WHEATACCESS = OFS_OPP_SHEEPACCESS + 1;
+    int OFS_OPP_WOODACCESS = OFS_OPP_WHEATACCESS + 1;
+    int OFS_OPP_CLAYPRODUCTION = OFS_OPP_WOODACCESS + 1;
+    int OFS_OPP_OREPRODUCTION = OFS_OPP_CLAYPRODUCTION + 1;
+    int OFS_OPP_SHEEPPRODUCTION = OFS_OPP_OREPRODUCTION + 1;
+    int OFS_OPP_WHEATPRODUCTION = OFS_OPP_SHEEPPRODUCTION + 1;
+    int OFS_OPP_WOODPRODUCTION = OFS_OPP_WHEATPRODUCTION + 1;
+    
+    int OPP_PLAYERSTATESIZE = OFS_OPP_WOODPRODUCTION + 1;
+    
+    int[] OFS_OPPPLAYERDATA        = { OFS_EXPPOSSIBILITY + 1,
+    		OFS_EXPPOSSIBILITY + 1 + OPP_PLAYERSTATESIZE,
+    		OFS_EXPPOSSIBILITY + 1 + 2*OPP_PLAYERSTATESIZE}; 
+    
+    int STATE_VECTOR_SIZE = OFS_EXPPOSSIBILITY + 1 + 3*OPP_PLAYERSTATESIZE;
+    
+    int OFS_ACT_BIAS_FEATURE = 0;
+    int OFS_ACT_CURRENTTURN = OFS_ACT_BIAS_FEATURE + 1;
+    int OFS_ACT_PLAYERSCORE = OFS_ACT_CURRENTTURN + 1;
+    int OFS_ACT_DICE = OFS_ACT_PLAYERSCORE + 1;
+    int OFS_ACT_ROADS = OFS_ACT_DICE + 1;
+    int OFS_ACT_SETTS = OFS_ACT_ROADS + 1;
+    int OFS_ACT_CITIES = OFS_ACT_SETTS + 1;
+    int OFS_ACT_RSSINHAND = OFS_ACT_CITIES + 1;
+    int OFS_ACT_RSSPROD = OFS_ACT_RSSINHAND + 5;
+    int OFS_ACT_RSSACCESS = OFS_ACT_RSSPROD + 5;
+    int OFS_ACT_TOUCHINGPORTS = OFS_ACT_RSSACCESS + 5;
+    int OFS_ACT_AFFECTEDBYROBBER = OFS_ACT_TOUCHINGPORTS + 6;
+    int OFS_ACT_RSSBLOCKED = OFS_ACT_AFFECTEDBYROBBER + 1;
+    int OFS_ACT_NUMBERBLOCKED = OFS_ACT_RSSBLOCKED + 5;
+    int OFS_ACT_PRODBLOCKED = OFS_ACT_NUMBERBLOCKED + 1;
+    int OFS_ACT_NOPLAYERSAFFECTED = OFS_ACT_PRODBLOCKED + 1;
+    int OFS_ACT_PLAYEDDEVCARDSINHAND = OFS_ACT_NOPLAYERSAFFECTED + 1;
+    int OFS_ACT_OLDDEVCARDSINHAND = OFS_ACT_PLAYEDDEVCARDSINHAND + 3;
+    int OFS_ACT_NEWDEVCARDSINHAND = OFS_ACT_OLDDEVCARDSINHAND + 4;
+    int OFS_ACT_VPCARDS = OFS_ACT_NEWDEVCARDSINHAND + 4;
+    int OFS_ACT_NPLAYEDKNIGHTS = OFS_ACT_VPCARDS + 1;
+    int OFS_ACT_CURRENTLONGESTROAD = OFS_ACT_NPLAYEDKNIGHTS + 1;
+    int OFS_ACT_LR = OFS_ACT_CURRENTLONGESTROAD + 1;
+    int OFS_ACT_LA = OFS_ACT_LR + 1;
+    int OFS_ACT_CANBUYCARD = OFS_ACT_LA + 1;
+    int OFS_ACT_CANBUILDROAD = OFS_ACT_CANBUYCARD + 1;
+    int OFS_ACT_CANBUILDSETTLEMENT = OFS_ACT_CANBUILDROAD + 1;
+    int OFS_ACT_CANBUILDCITY = OFS_ACT_CANBUILDSETTLEMENT + 1;
+    int OFS_ACT_CANBANKORPORTTRADE = OFS_ACT_CANBUILDCITY + 1;
+    int OFS_ACT_OVER7CARDS = OFS_ACT_CANBANKORPORTTRADE + 1;
+    /** This includes possible port types access */
+    int OFS_ACT_NEXTLEGALPRODUCTIVITY = OFS_ACT_OVER7CARDS + 1;
+    int OFS_ACT_EXPPOSSIBILITY = OFS_ACT_NEXTLEGALPRODUCTIVITY + 11;
+    int OFS_ACT_OPPTOTALRSS = OFS_ACT_EXPPOSSIBILITY + 1;
+//    int OFS_ACT_DISTANCETOPORT = OFS_ACT_NEXTLEGALPRODUCTIVITY + 11;
+//    int OFS_ACT_DISTANCETOLEGAL = OFS_ACT_DISTANCETOPORT + 1;
+//    int OFS_ACT_DISTANCETOOPP = OFS_ACT_DISTANCETOLEGAL + 1;
+    
+    int ACTION_VECTOR_SIZE = OFS_ACT_OPPTOTALRSS + 3;
+}
